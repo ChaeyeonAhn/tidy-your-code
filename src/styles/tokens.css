@@ -1,0 +1,199 @@
+/* cheney design system — tokens (v1). 원본: WebstormProjects/design-system/DESIGN.md */
+
+:root {
+  /* color — UI */
+  --c-bg: #ffffff;
+  --c-bg-subtle: #fafafa;
+  --c-text: #111111;
+  --c-text-2: #5c5c5c;
+  --c-text-3: #8a8a8a;
+  --c-line: #e6e6e6;
+  --c-line-strong: #111111;
+  --c-accent: #227280;
+  --c-accent-hover: #1b5d68;
+  --c-accent-tint: #eef5f6;
+
+  /* color — teal scale (작품·데이터 시각화) */
+  --teal-50: #eef5f6;
+  --teal-100: #d3e6e9;
+  --teal-200: #a8cdd3;
+  --teal-300: #6fa9b2;
+  --teal-400: #3f8b96;
+  --teal-500: #227280;
+  --teal-600: #1b5d68;
+  --teal-700: #154951;
+  --teal-800: #0f353b;
+  --teal-900: #0a2327;
+  --black: #0a0a0a;
+  --white: #ffffff;
+
+  /* type */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fs-h1: 32px;
+  --fs-h2: 24px;
+  --fs-h3: 20px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-label: 12px;
+
+  --lh-h1: 1.25;
+  --lh-h2: 1.3;
+  --lh-h3: 1.4;
+  --lh-body: 1.7;
+  --lh-small: 1.6;
+  --lh-label: 1.4;
+
+  --fw-regular: 400;
+  --fw-bold: 600;
+
+  /* layout */
+  --w-text: 640px;
+  --w-media: 960px;
+  --gutter: 16px;
+
+  /* spacing (4px base) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --sp-10: 128px;
+
+  /* shape */
+  --r-sm: 2px;
+  --r-md: 4px;
+  --hairline: 1px solid var(--c-line);
+
+  /* motion */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* grain (작품 영역 전용) */
+  --grain-opacity: 0.15; /* CSS 오버레이 레이어 불투명도. GLSL 진폭(0.06)과 스케일이 다름 */
+
+  color-scheme: light;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --fs-h1: 28px;
+    --fs-h2: 22px;
+  }
+}
+
+/* base */
+html {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+}
+
+h1, h2, h3 {
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
+h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); }
+h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+
+a {
+  color: var(--c-accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease);
+}
+a:hover { text-decoration: underline; color: var(--c-accent-hover); }
+p a { text-decoration: underline; }
+
+:focus-visible {
+  outline: 1px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/* 클릭 가능한 요소는 호버 시 항상 pointer. 비활성은 not-allowed */
+a[href], button, select, summary, label[for],
+[role="button"], [role="link"], [role="tab"],
+input[type="button"], input[type="submit"], input[type="reset"],
+input[type="checkbox"], input[type="radio"], input[type="file"] {
+  cursor: pointer;
+}
+:disabled, [aria-disabled="true"] { cursor: not-allowed; }
+
+/* 입력 필드: 하단 헤어라인만. 포커스 시 outline 대신 하단 선만 accent */
+input, textarea, select {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  border-bottom: var(--hairline);
+  border-radius: 0;
+  padding: var(--sp-2) 0;
+  width: 100%;
+  background: transparent;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+input:focus, input:focus-visible,
+textarea:focus, textarea:focus-visible,
+select:focus, select:focus-visible {
+  outline: none;
+  border-bottom-color: var(--c-accent);
+}
+
+hr {
+  border: 0;
+  border-top: var(--hairline);
+  margin: 0;
+}
+
+img, video, canvas { border-radius: var(--r-md); max-width: 100%; display: block; }
+
+/* utilities */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-text-3);
+}
+
+.col-text  { max-width: var(--w-text);  margin-inline: auto; padding-inline: var(--gutter); }
+.col-media { max-width: var(--w-media); margin-inline: auto; padding-inline: var(--gutter); }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
