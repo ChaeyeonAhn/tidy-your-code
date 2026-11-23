@@ -1,10 +1,54 @@
-/* 토큰은 src/styles/tokens.css (cheney design system 복사본). 여기서는 값 하드코딩 없이 토큰만 쓴다. */
+/*
+ * 토큰 원본은 src/styles/tokens.css (cheney design system 복사본, 라이트).
+ * 이 게임은 "VSCode 다크" 컨셉이라 프로젝트 한정으로 UI 토큰을 다크 값으로 덮어쓴다.
+ * 원본 디자인 시스템은 바꾸지 않았다. 강조색은 틸 유지, 코드 색은 VSCode Dark+ 팔레트.
+ */
 
 :root {
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --code-fs: 13px;
   --code-lh: 24px;
   --gutter-w: 40px;
+
+  /* UI — VSCode Dark Modern */
+  --c-bg: #1f1f1f;          /* editor */
+  --c-bg-subtle: #181818;   /* title bar, tabs, panels */
+  --c-text: #cccccc;
+  --c-text-2: #9d9d9d;
+  --c-text-3: #6e7681;
+  --c-line: #2b2b2b;
+  --c-line-strong: #454545;
+  --c-accent: var(--teal-300);
+  --c-accent-hover: var(--teal-200);
+  --c-accent-tint: rgba(111, 169, 178, 0.14);
+  color-scheme: dark;
+
+  --vs-raised: #2a2a2a;       /* 키, 버튼 면 */
+  --vs-border: #3c3c3c;
+  --vs-current-line: #282828;
+  --vs-widget: #252526;       /* hover/말풍선 위젯 */
+  --vs-statusbar: var(--teal-600);
+  --vs-statusbar-fg: #ffffff;
+  --vs-error: #f85149;
+  --vs-error-tint: rgba(248, 81, 73, 0.1);
+  --vs-bright: #ffffff;
+
+  /* 코드 — VSCode Dark+ */
+  --syn-storage: #569cd6;     /* const let function class this true */
+  --syn-control: #c586c0;     /* if else for return */
+  --syn-var: #9cdcfe;
+  --syn-fn: #dcdcaa;
+  --syn-type: #4ec9b0;        /* Box */
+  --syn-const: #4fc1ff;       /* NAP_LIMIT */
+  --syn-str: #ce9178;
+  --syn-num: #b5cea8;
+  --syn-comment: #6a9955;
+  --syn-op: #d4d4d4;
+  --syn-bracket-0: #ffd700;
+  --syn-bracket-1: #da70d6;
+  --syn-bracket-2: #179fff;
+
+  --cat-fur: #ececec;
 }
 
 * { box-sizing: border-box; }
@@ -60,7 +104,7 @@ button {
   .window {
     max-width: 420px;
     height: min(100%, 860px);
-    border: var(--hairline);
+    border: 1px solid var(--vs-border);
     border-radius: var(--r-md);
   }
 }
@@ -202,24 +246,32 @@ button {
 .txt { padding-left: 8px; }
 
 .ln-passed .txt { opacity: 0.4; }
-.ln-current { background: var(--c-bg-subtle); }
-.ln-bad { background: var(--c-accent-tint); }
-.ln-bad .gutter { color: var(--c-accent); }
+.ln-current { background: var(--vs-current-line); }
+.ln-current .gutter { color: var(--c-text); }
+.ln-bad { background: var(--vs-error-tint); }
+.ln-bad .gutter { color: var(--vs-error); }
 
 .paw { fill: var(--c-text-3); }
 
-/* 문법 색: 흑백 + 틸 스케일만 */
-.t-kw { color: var(--teal-600); font-weight: var(--fw-bold); }
-.t-str { color: var(--teal-400); }
-.t-num { color: var(--teal-400); }
-.t-comment { color: var(--c-text-3); font-style: italic; }
-.t-ident { color: var(--c-text); }
-.t-op, .t-punct { color: var(--c-text-2); }
+/* 문법 색: VSCode Dark+ */
+.t-kw { color: var(--syn-storage); }
+.t-control { color: var(--syn-control); }
+.t-ident { color: var(--syn-var); }
+.t-fn { color: var(--syn-fn); }
+.t-type { color: var(--syn-type); }
+.t-const { color: var(--syn-const); }
+.t-str { color: var(--syn-str); }
+.t-num { color: var(--syn-num); }
+.t-comment { color: var(--syn-comment); }
+.t-op, .t-punct { color: var(--syn-op); }
+.t-br0 { color: var(--syn-bracket-0); }
+.t-br1 { color: var(--syn-bracket-1); }
+.t-br2 { color: var(--syn-bracket-2); }
 
 .squiggle {
   position: absolute;
   height: 4px;
-  background: var(--c-accent);
+  background: var(--vs-error);
   pointer-events: none;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 3 Q1.5 0 3 2 T6 1' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 3 Q1.5 0 3 2 T6 1' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x;
@@ -244,8 +296,8 @@ button {
   top: var(--sp-2);
   right: var(--sp-3);
   padding: 2px var(--sp-2);
-  background: var(--c-bg);
-  border: 1px solid var(--c-text);
+  background: var(--vs-widget);
+  border: 1px solid var(--c-line-strong);
   border-radius: var(--r-sm);
   color: var(--c-text);
   text-transform: none;
@@ -255,10 +307,10 @@ button {
 
 .cat-pos { position: absolute; pointer-events: none; z-index: 2; }
 .cat { display: block; overflow: visible; }
-.cat-body { fill: var(--c-text); }
+.cat-body { fill: var(--cat-fur); }
 .cat-tail, .cat-leg {
   fill: none;
-  stroke: var(--c-text);
+  stroke: var(--cat-fur);
   stroke-width: 1.8;
   stroke-linecap: round;
 }
@@ -290,8 +342,9 @@ button {
   font-size: var(--fs-small);
   line-height: var(--lh-small);
   white-space: nowrap;
-  background: var(--c-bg);
-  border: 1px solid var(--c-text);
+  background: var(--vs-widget);
+  color: var(--c-text);
+  border: 1px solid var(--c-line-strong);
   border-radius: var(--r-sm);
   pointer-events: none;
   animation: appear var(--dur-base) var(--ease);
@@ -307,14 +360,14 @@ button {
   align-items: center;
   gap: var(--sp-3);
   padding: 0 var(--sp-3);
-  border-top: var(--hairline);
-  color: var(--c-text-2);
+  background: var(--vs-statusbar);
+  color: var(--vs-statusbar-fg);
   text-transform: none;
   letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
 }
-.statusbar .hearts { color: var(--c-accent); letter-spacing: 0.1em; font-variant-emoji: text; }
+.statusbar .hearts { color: var(--vs-statusbar-fg); letter-spacing: 0.1em; font-variant-emoji: text; }
 .sb-right { margin-left: auto; display: flex; gap: var(--sp-3); }
 
 .keybar {
@@ -332,8 +385,8 @@ button {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  background: var(--c-bg);
-  border: var(--hairline);
+  background: var(--vs-raised);
+  border: 1px solid var(--vs-border);
   border-radius: var(--r-sm);
   transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
@@ -359,15 +412,15 @@ button {
 .screen .muted { color: var(--c-text-2); font-size: var(--fs-small); line-height: var(--lh-small); }
 
 .btn-primary {
-  background: var(--c-text);
-  color: var(--c-bg);
+  background: var(--teal-500);
+  color: var(--vs-bright);
   border-radius: var(--r-sm);
   padding: var(--sp-2) var(--sp-4);
   font-weight: var(--fw-bold);
   transition: background var(--dur-fast) var(--ease);
 }
-.btn-primary:hover { background: var(--c-accent); }
-.btn-primary:disabled { background: var(--c-line); color: var(--c-text-3); }
+.btn-primary:hover { background: var(--teal-400); }
+.btn-primary:disabled { background: var(--vs-raised); color: var(--c-text-3); }
 
 .btn-text { color: var(--c-text-2); transition: color var(--dur-fast) var(--ease); }
 .btn-text:hover { color: var(--c-accent); }
@@ -409,6 +462,6 @@ button {
   color: var(--c-accent);
   border-radius: var(--r-sm);
 }
-.brief-practice { border-top: 1px solid var(--c-text); border-bottom: 1px solid var(--c-text); padding-bottom: var(--sp-2); }
+.brief-practice { border-top: 1px solid var(--c-line-strong); border-bottom: 1px solid var(--c-line-strong); padding-bottom: var(--sp-2); }
 .brief-practice .editor { cursor: text; }
 .brief-go { align-self: flex-start; margin-left: var(--gutter-w); }

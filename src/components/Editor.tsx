@@ -1,9 +1,9 @@
 "use client";
 
-import { memo, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { catPose, type Cat } from "@/engine/cat";
 import type { LineMark } from "@/engine/game";
-import { tokenizeLine } from "@/engine/tokenize";
+import { tokenizeLine, type Tok } from "@/engine/tokenize";
 import type { Cursor, Doc, Violation } from "@/engine/types";
 import { CAT_H, CAT_W, CatSprite, Paw } from "./CatSprite";
 
@@ -13,18 +13,63 @@ const PADX = 8;
 
 type LineState = "normal" | "passed" | "bad" | "current";
 
-const CodeLine = memo(function CodeLine({ text, n, state }: { text: string; n: number; state: LineState }) {
+const CONTROL = new Set(["if", "else", "for", "while", "return", "break", "continue", "of", "in"]);
+const OPEN = new Set(["(", "{", "["]);
+const CLOSE = new Set([")", "}", "]"]);
+
+/** VSCode Dark+ 스타일 토큰 클래스 */
+function classOf(toks: Tok[], k: number): string {
+  const t = toks[k];
+  if (t.type === "kw") return CONTROL.has(t.text) ? "t-control" : "t-kw";
+  if (t.type === "ident") {
+    if (toks[k + 1]?.text === "(") return "t-fn";
+    if (/^[A-Z][A-Z0-9_]+$/.test(t.text)) return "t-const";
+    if (/^[A-Z]/.test(t.text)) return "t-type";
+  }
+  return `t-${t.type}`;
+}
+
+/** 줄마다 시작 시점의 괄호 깊이 (괄호 쌍 색칠용) */
+function bracketStarts(doc: Doc): number[] {
+  let d = 0;
+  return doc.map((line) => {
+    const start = d;
+    for (const t of tokenizeLine(line)) {
+      if (t.type !== "punct") continue;
+      if (OPEN.has(t.text)) d++;
+      else if (CLOSE.has(t.text)) d = Math.max(0, d - 1);
+    }
+    return start;
+  });
+}
+
+const CodeLine = memo(function CodeLine({
+  text,
+  n,
+  state,
+  br,
+}: {
+  text: string;
+  n: number;
+  state: LineState;
+  br: number;
+}) {
   const parts: ReactNode[] = [];
   let i = 0;
-  for (const t of tokenizeLine(text)) {
+  let depth = br;
+  const toks = tokenizeLine(text);
+  toks.forEach((t, k) => {
     if (t.start > i) parts.push(text.slice(i, t.start));
+    let cls = classOf(toks, k);
+    if (t.type === "punct" && OPEN.has(t.text)) cls = `t-br${depth++ % 3}`;
+    else if (t.type === "punct" && CLOSE.has(t.text)) cls = `t-br${(depth = Math.max(0, depth - 1)) % 3}`;
     parts.push(
-      <span key={t.start} className={`t-${t.type}`}>
+      <span key={t.start} className={cls}>
         {t.text}
       </span>,
     );
     i = t.end;
-  }
+  });
   if (i < text.length) parts.push(text.slice(i));
   return (
     <div className={`ln ln-${state}`}>
@@ -87,6 +132,7 @@ export function Editor({
   const charW = useCharWidth(measureRef);
   const [view, setView] = useState({ top: 0, h: 0 });
   const padTop = cat ? LH : 4;
+  const brStarts = useMemo(() => bracketStarts(doc), [doc]);
 
   const xOf = (col: number) => GUTTER + PADX + col * charW;
   const yOf = (line: number) => padTop + line * LH;
@@ -154,7 +200,7 @@ export function Editor({
             {"M".repeat(20)}
           </span>
           {doc.map((text, i) => (
-            <CodeLine key={i} text={text} n={i} state={stateOf(i)} />
+            <CodeLine key={i} text={text} n={i} state={stateOf(i)} br={brStarts[i]} />
           ))}
 
           {squiggles.map((v, i) => (
