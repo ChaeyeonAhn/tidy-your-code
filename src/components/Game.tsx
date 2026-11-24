@@ -7,7 +7,7 @@ import { buildExample } from "@/engine/generate";
 import { RULES, checkAll } from "@/engine/rules";
 import type { KeyId, RuleId } from "@/engine/types";
 import { Briefing } from "./Briefing";
-import { CatSprite } from "./CatSprite";
+import { CatSprite, Paw } from "./CatSprite";
 import { Editor } from "./Editor";
 import { KeyBar } from "./KeyBar";
 
@@ -83,7 +83,7 @@ export function Game() {
 
   return (
     <main className="stage">
-      <div className="window">
+      <div className="window" data-rule={briefRule ?? undefined}>
         <div className="titlebar">
           <span className="dots" aria-hidden>
             <i />
@@ -95,6 +95,7 @@ export function Game() {
 
         <div className="tabs">
           <span className="tab active">
+            <TabIcon kind={s.phase === "briefing" ? "md" : s.phase === "title" ? "vs" : "ts"} />
             {s.phase === "briefing" ? "cat-rules.md" : s.phase === "title" ? "Welcome" : file}
             <span className="tab-x" aria-hidden>
               ×
@@ -147,6 +148,15 @@ export function Game() {
   );
 }
 
+function TabIcon({ kind }: { kind: "ts" | "md" | "vs" }) {
+  const glyph = kind === "ts" ? "TS" : kind === "md" ? "M↓" : "❯";
+  return (
+    <span className={`tab-icon ${kind}`} aria-hidden>
+      {glyph}
+    </span>
+  );
+}
+
 function MainEditor({ s, onTap }: { s: GameState; onTap: (line: number, col: number) => void }) {
   const bubble =
     s.phase === "countdown"
@@ -183,6 +193,7 @@ function RulesBar({ rules, unit }: { rules: RuleId[]; unit: number }) {
         {rules.map((id) => (
           <button
             key={id}
+            data-rule={id}
             className={`chip ${peek === id ? "on" : ""}`}
             onClick={() => setPeek(peek === id ? null : id)}
           >
@@ -194,8 +205,8 @@ function RulesBar({ rules, unit }: { rules: RuleId[]; unit: number }) {
         <div className="rules-peek">
           <p className="peek-say">{RULES[peek].plain(unit)}</p>
           <div className="brief-examples">
-            <Editor doc={ex.doc} highlights={bad} fit label="✗" />
-            <Editor doc={ex.target} fit label="✓" />
+            <Editor doc={ex.doc} highlights={bad} fit label="✗" labelTone="bad" />
+            <Editor doc={ex.target} fit label="✓" labelTone="good" />
           </div>
         </div>
       )}
@@ -206,8 +217,12 @@ function RulesBar({ rules, unit }: { rules: RuleId[]; unit: number }) {
 function StatusBar({ s }: { s: GameState }) {
   const hearts = Array.from({ length: BALANCE.maxHearts }, (_, i) => (i < s.hearts ? "♥" : "♡")).join("");
   const inGame = s.phase !== "title";
+  const mode = !inGame ? "nofolder" : s.phase === "over" || (s.phase === "playing" && s.scold) ? "debug" : "normal";
   return (
-    <div className="statusbar label">
+    <div className="statusbar label" data-mode={mode}>
+      <span className="sb-remote" aria-hidden>
+        <Paw />
+      </span>
       {inGame ? (
         <>
           <span className="hearts" aria-label={`목숨 ${s.hearts}`}>
@@ -244,7 +259,14 @@ function Welcome({ best, onStart }: { best: number; onStart: () => void }) {
       <div className="hero-cat">
         <CatSprite phase="sit" />
       </div>
-      <h1>Tidy Your Code</h1>
+      <h1 className="title-code">
+        <span className="t-fn">tidy</span>
+        <span className="t-br0">(</span>
+        <span className="t-ident">your</span>
+        <span className="t-op">.</span>
+        <span className="t-type">Code</span>
+        <span className="t-br0">)</span>
+      </h1>
       <p>
         냥이가 코드 위를 걸어오면서 한 줄씩 읽는다.
         <br />
@@ -262,7 +284,7 @@ function Welcome({ best, onStart }: { best: number; onStart: () => void }) {
 function Clear({ s, onNext }: { s: GameState; onNext: () => void }) {
   return (
     <div className="screen">
-      <div className="label">ROUND {s.round} CLEAR</div>
+      <div className="label pass">✓ ROUND {s.round} CLEAR</div>
       <h2>{s.perfect ? "깔끔하다냥" : "이번엔 봐준다냥"}</h2>
       <dl className="rows">
         <div>
@@ -295,7 +317,7 @@ function Over({ s, onRetry, onHome }: { s: GameState; onRetry: () => void; onHom
   return (
     <div className="screen">
       <CatSprite phase="sit" />
-      <div className="label">GAME OVER</div>
+      <div className="label fail">✗ GAME OVER</div>
       <h2>냥이가 삐졌다</h2>
       <dl className="rows">
         <div>

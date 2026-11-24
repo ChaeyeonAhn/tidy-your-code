@@ -35,15 +35,17 @@ export function Briefing({
         <div>
           <div className="cap">
             {b.changed ? "냥이 변덕" : "이번에 볼 규칙"}
-            {b.queue.length > 1 && ` / ${b.idx + 1} — ${b.queue.length}`}
+            {b.queue.length > 1 && ` ${b.idx + 1}/${b.queue.length}`}
+            {" · "}
+            <span className="rule-name">{rule.label(unit)}</span>
           </div>
           <p className="brief-say">{rule.plain(unit)}</p>
         </div>
       </div>
 
       <div className="brief-examples">
-        <Editor doc={b.example.doc} highlights={bad} fit label="✗ 혼나는 코드" />
-        <Editor doc={b.example.target} fit label="✓ 통과" />
+        <Editor doc={b.example.doc} highlights={bad} fit label="✗ 혼나는 코드" labelTone="bad" />
+        <Editor doc={b.example.target} fit label="✓ 통과" labelTone="good" />
       </div>
 
       <div className="brief-keys">
@@ -61,6 +63,7 @@ export function Briefing({
             onTap={onTap}
             rejects={rejects}
             fit
+            labelTone={b.practice.solved ? "good" : undefined}
             label={b.practice.solved ? "연습 — 통과 ✓" : "연습 — 고칠 곳을 탭하고 아래 키를 눌러봐"}
           />
         </div>

@@ -25,4 +25,5 @@ npm test      # 엔진 테스트 (Vitest)
 | `src/components/` | 에디터, 냥이 스프라이트, 키 바, 브리핑 |
 | `src/content/snippets.ts` | 정답 포맷 코드 스니펫 |
 | `src/config/balance.ts` | 속도·점수·라운드 구성 등 튜닝 값 |
-| `src/styles/tokens.css` | cheney design system 토큰 (복사본) |
+| `src/styles/tokens.css` | cheney design system 토큰 (복사본, `globals.css`에서 VSCode 룩으로 덮어씀) |
+| `public/fonts/` | D2Coding Ligature (naver/d2codingfont, OFL) |

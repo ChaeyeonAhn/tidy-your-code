@@ -13,7 +13,7 @@ const INFO: Record<KeyId, { glyph: string; label: string }> = {
 };
 
 export function KeyGlyph({ k }: { k: KeyId }) {
-  return <span className="keyglyph">{INFO[k].glyph}</span>;
+  return <span className="keyglyph" data-k={k}>{INFO[k].glyph}</span>;
 }
 
 export function KeyBar({
@@ -33,6 +33,7 @@ export function KeyBar({
         <button
           key={k}
           className={`key ${highlight.includes(k) ? "hl" : ""}`}
+          data-k={k}
           disabled={disabled}
           aria-label={INFO[k].label}
           onPointerDown={(e) => {

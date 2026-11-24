@@ -110,6 +110,7 @@ interface Props {
   /** 내용 높이에 맞춤 (브리핑 예시) */
   fit?: boolean;
   label?: string;
+  labelTone?: "bad" | "good";
 }
 
 export function Editor({
@@ -125,6 +126,7 @@ export function Editor({
   follow,
   fit,
   label,
+  labelTone,
 }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLDivElement>(null);
@@ -193,7 +195,7 @@ export function Editor({
 
   return (
     <div className={`editor-wrap ${fit ? "fit" : ""}`}>
-      {label && <div className="editor-label cap">{label}</div>}
+      {label && <div className={`editor-label cap ${labelTone ?? ""}`}>{label}</div>}
       <div className="editor" ref={scrollRef} onClick={onClick} role={onTap ? "textbox" : undefined} aria-label={label}>
         <div className="code" ref={codeRef} style={{ paddingTop: padTop }}>
           <span className="measure" ref={measureRef} aria-hidden>
